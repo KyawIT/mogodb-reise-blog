@@ -208,9 +208,9 @@ public class InitBean {
                 entry.blockComments = new ArrayList<>();
             }
 
-            entry.blockComments.add(new BlogComment(users.get(0), new Date(), entry.id, "Sehr informativer Beitrag!"));
-            entry.blockComments.add(new BlogComment(users.get(1), new Date(), entry.id, "Hat mir echt geholfen!"));
-            entry.blockComments.add(new BlogComment(users.get(2), new Date(), entry.id, "Gute Tipps, danke!"));
+            entry.blockComments.add(new BlogComment(null, users.get(0), new Date(), entry.id, "Sehr informativer Beitrag!"));
+            entry.blockComments.add(new BlogComment(null, users.get(1), new Date(), entry.id, "Hat mir echt geholfen!"));
+            entry.blockComments.add(new BlogComment(null, users.get(2), new Date(), entry.id, "Gute Tipps, danke!"));
 
             blogEntryRepository.update(entry);
         }
@@ -221,8 +221,8 @@ public class InitBean {
                 entry.blockComments = new ArrayList<>();
             }
 
-            entry.blockComments.add(new BlogComment(users.get(1), new Date(), entry.id, "Sehr inspirierend!"));
-            entry.blockComments.add(new BlogComment(users.get(3), new Date(), entry.id, "Ich werde das ausprobieren."));
+            entry.blockComments.add(new BlogComment(null, users.get(1), new Date(), entry.id, "Sehr inspirierend!"));
+            entry.blockComments.add(new BlogComment(null, users.get(3), new Date(), entry.id, "Ich werde das ausprobieren."));
 
             blogEntryRepository.update(entry);
         }
