@@ -1,0 +1,77 @@
+{
+  "validator": {
+    "$jsonSchema": {
+      "bsonType": "object",
+      "title": "BlogEntryValidation",
+      "required": ["title", "author", "description", "editDates", "impressionCount", "commentsAllowed", "blockComments", "category"],
+      "properties": {
+        "title": {
+          "bsonType": "string",
+          "minLength": 5,
+          "maxLength": 100
+        },
+        "author": {
+          "bsonType": "object",
+          "required": ["name", "email", "username", "firstName", "lastName", "password"],
+          "properties": {
+            "name": {"bsonType": "string"},
+            "email": {"bsonType": "string", "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"},
+            "username": {"bsonType": "string"},
+            "firstName": {"bsonType": "string"},
+            "lastName": {"bsonType": "string"},
+            "password": {"bsonType": "string"}
+          }
+        },
+        "description": {
+          "bsonType": "string",
+          "minLength": 10
+        },
+        "editDates": {
+          "bsonType": "array",
+          "minItems": 1,
+          "items": {"bsonType": "date"},
+          "description": "Mindestens ein Bearbeitungsdatum erforderlich"
+        },
+        "impressionCount": {
+          "bsonType": "int",
+          "minimum": 0
+        },
+        "commentsAllowed": {
+          "bsonType": "bool"
+        },
+        "blockComments": {
+          "bsonType": "array",
+          "items": {
+            "bsonType": "object",
+            "required": ["author", "creationDate", "blogEntry", "content"],
+            "properties": {
+              "author": {
+                "bsonType": "object",
+                "required": ["name", "email", "username", "firstName", "lastName", "password"],
+                "properties": {
+                  "name": {"bsonType": "string"},
+                  "email": {"bsonType": "string", "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"},
+                  "username": {"bsonType": "string"},
+                  "firstName": {"bsonType": "string"},
+                  "lastName": {"bsonType": "string"},
+                  "password": {"bsonType": "string"}
+                }
+              },
+              "creationDate": {"bsonType": "date"},
+              "blogEntry": {"bsonType": "objectId"},
+              "content": {"bsonType": "string"}
+            }
+          }
+        },
+        "category": {
+          "bsonType": "object",
+          "properties": {
+            "name": {"bsonType": "string"},
+            "description": {"bsonType": "string"}
+          },
+          "required": ["name"]
+        }
+      }
+    }
+  }
+}
