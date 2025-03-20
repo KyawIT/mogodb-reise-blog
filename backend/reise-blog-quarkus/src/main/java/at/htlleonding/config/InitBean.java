@@ -26,7 +26,6 @@ public class InitBean {
     @Inject
     BlogUserRepository blogUserRepository;
 
-    // Da BlogComments nun eingebettet sind, brauchen wir keinen separaten BlogCommentRepository mehr
     @Inject
     BlogEntryRepository blogEntryRepository;
 
@@ -45,9 +44,6 @@ public class InitBean {
             initializeBlogEntries();
         }
 
-        // Da wir nun Comments in dieselbe "BlogEntries"-Collection einbetten,
-        // erstellen wir keine eigene Comments-Collection mehr
-        // sondern fügen Comments direkt in die vorhandenen BlogEntries ein.
         addEmbeddedComments();
     }
 
@@ -71,20 +67,6 @@ public class InitBean {
     private void initializeBlogEntries() {
         List<BlogCategory> categories = blogCategoryRepository.listAll();
         List<BlogUser> users = blogUserRepository.listAll();
-
-        /*
-         * Deine BlogEntry-Klasse hat (laut Schema + Code):
-         *   public String title;
-         *   public BlogUser author;
-         *   public String description;
-         *   public Date[] editDates;
-         *   public int impressionCount;
-         *   public boolean commentsAllowed;
-         *   public List<BlogComment> blockComments; // EINGEBETTET
-         *   public BlogCategory category;
-         *
-         * Wir belegen blockComments mit einer leeren Liste, falls wir noch später Comments hinzufügen wollen.
-         */
 
         blogEntryRepository.persist(
                 new BlogEntry(
@@ -216,35 +198,24 @@ public class InitBean {
         LOGGER.info("✅ 9 BlogEntries wurden hinzugefügt.");
     }
 
-    /**
-     * Füge jetzt Kommentare direkt in die vorhandenen BlogEntries (eingebettet) ein.
-     * Anstelle einer eigenen BlogComments-Collection benutzen wir also 'blockComments'.
-     */
     private void addEmbeddedComments() {
         List<BlogEntry> commentableEntries = blogEntryRepository.find("commentsAllowed", true).list();
         List<BlogUser> users = blogUserRepository.listAll();
 
-        // z.B. 2 Einträge, die je 3 Comments bekommen
         for (int i = 0; i < 2 && i < commentableEntries.size(); i++) {
             BlogEntry entry = commentableEntries.get(i);
 
-            // Nur, falls blockComments noch null sein sollte
             if (entry.blockComments == null) {
                 entry.blockComments = new ArrayList<>();
             }
 
-            // Entsprechend deinem Schema:
-            //  "required": ["author", "creationDate", "blogEntry", "content"]
-            // => also befüllen wir blogEntry = entry.id
             entry.blockComments.add(new BlogComment(users.get(0), new Date(), entry.id, "Sehr informativer Beitrag!"));
             entry.blockComments.add(new BlogComment(users.get(1), new Date(), entry.id, "Hat mir echt geholfen!"));
             entry.blockComments.add(new BlogComment(users.get(2), new Date(), entry.id, "Gute Tipps, danke!"));
 
-            // Jetzt aktualisieren wir den BlogEntry
             blogEntryRepository.update(entry);
         }
 
-        // Nächste 2 Einträge, je 2 Comments
         for (int i = 2; i < 4 && i < commentableEntries.size(); i++) {
             BlogEntry entry = commentableEntries.get(i);
             if (entry.blockComments == null) {

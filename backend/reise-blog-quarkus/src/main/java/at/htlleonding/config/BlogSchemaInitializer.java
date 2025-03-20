@@ -22,7 +22,7 @@ import java.util.concurrent.TimeUnit;
 
 @ApplicationScoped
 @Startup
-@Priority(1)  // Wird zuerst ausgeführt
+@Priority(1)
 public class BlogSchemaInitializer {
 
     private final MongoClient mongoClient;
@@ -34,7 +34,6 @@ public class BlogSchemaInitializer {
     public BlogSchemaInitializer(MongoClient mongoClient) {
         this.mongoClient = mongoClient;
 
-        // 1) JSON-Schema für com.networknt.schema laden
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("blogEntrySchema.json")) {
             if (is == null) {
                 throw new RuntimeException("❌ Schema-Datei blogEntrySchema.json nicht gefunden!");
@@ -49,7 +48,6 @@ public class BlogSchemaInitializer {
     void onStart(@Observes StartupEvent event) {
         System.out.println("🔄 BlogSchemaInitializer wird ausgeführt...");
 
-        // 2) Auf MongoDB warten
         MongoDatabase database = waitForDatabase("blogdb@localhost");
         if (database == null) {
             System.out.println("❌ MongoDB konnte nicht erreicht werden. Starte Quarkus nicht.");
@@ -58,28 +56,22 @@ public class BlogSchemaInitializer {
 
         System.out.println("✅ Verbindung zu MongoDB erfolgreich!");
 
-        // 3) Collections erstellen (falls nicht vorhanden)
         createCollectionIfNotExists(database, "BlogEntries");
         createCollectionIfNotExists(database, "BlogUsers");
         createCollectionIfNotExists(database, "BlogCategories");
         createCollectionIfNotExists(database, "BlogComments");
 
-        // 4) Schema anwenden
         applySchemaToBlogEntries(database);
 
-        // 5) Optional: Beispiel-Test
         testValidation();
     }
 
-    /**
-     * Wartet wiederholt, bis MongoDB erreichbar ist (Ping).
-     */
     private MongoDatabase waitForDatabase(String databaseName) {
         int attempts = 0;
         while (attempts < MAX_RETRIES) {
             try {
                 MongoDatabase database = mongoClient.getDatabase(databaseName);
-                database.runCommand(new Document("ping", 1)); // kleiner Ping
+                database.runCommand(new Document("ping", 1));
                 return database;
             } catch (Exception e) {
                 attempts++;
@@ -95,9 +87,6 @@ public class BlogSchemaInitializer {
         return null;
     }
 
-    /**
-     * Erstellt eine Collection nur, wenn sie noch nicht existiert.
-     */
     private void createCollectionIfNotExists(MongoDatabase database, String collectionName) {
         List<String> collections = database.listCollectionNames().into(new java.util.ArrayList<>());
         if (!collections.contains(collectionName)) {
@@ -108,10 +97,6 @@ public class BlogSchemaInitializer {
         }
     }
 
-    /**
-     * Lädt die JSON-Datei "blogEntrySchema.json" erneut, extrahiert das Feld "validator"
-     * (das "$jsonSchema" enthält) und setzt es als Validator für die Collection "BlogEntries".
-     */
     private void applySchemaToBlogEntries(MongoDatabase database) {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("blogEntrySchema.json")) {
             if (is == null) {
@@ -119,19 +104,16 @@ public class BlogSchemaInitializer {
                 return;
             }
 
-            // Das gesamte JSON laden
             Document topLevelDoc = Document.parse(new String(is.readAllBytes()));
-            // Das Feld "validator" extrahieren
             Document validatorDoc = topLevelDoc.get("validator", Document.class);
             if (validatorDoc == null) {
                 System.out.println("❌ JSON-Datei enthält kein 'validator'-Feld!");
                 return;
             }
 
-            // Schema per collMod setzen
             database.runCommand(
                     new Document("collMod", "BlogEntries")
-                            .append("validator", validatorDoc)  // => enthält "$jsonSchema"
+                            .append("validator", validatorDoc)
                             .append("validationLevel", "strict")
                             .append("validationAction", "error")
             );
@@ -142,10 +124,6 @@ public class BlogSchemaInitializer {
         }
     }
 
-    /**
-     * Validiert einen Blog-Entry gegen das lokal geladene com.networknt-JsonSchema.
-     * Wirf eine Exception, wenn das Dokument nicht gültig ist.
-     */
     public void validateBlogEntry(JsonNode blogEntry) {
         Set<ValidationMessage> errors = jsonSchema.validate(blogEntry);
         if (!errors.isEmpty()) {
@@ -154,9 +132,7 @@ public class BlogSchemaInitializer {
         System.out.println("✅ Blog Entry ist gültig: " + blogEntry);
     }
 
-    /**
-     * Testet einmal ein Minimalobjekt, um zu zeigen, dass die Validierung funktioniert.
-     */
+
     private void testValidation() {
         JsonNode testEntry = objectMapper.createObjectNode()
                 .put("title", "Test Blog")
