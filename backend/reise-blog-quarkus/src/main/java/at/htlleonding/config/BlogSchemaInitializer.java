@@ -59,7 +59,6 @@ public class BlogSchemaInitializer {
         createCollectionIfNotExists(database, "BlogEntries");
         createCollectionIfNotExists(database, "BlogUsers");
         createCollectionIfNotExists(database, "BlogCategories");
-        createCollectionIfNotExists(database, "BlogComments");
 
         applySchemaToBlogEntries(database);
 

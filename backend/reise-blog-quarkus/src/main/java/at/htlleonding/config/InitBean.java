@@ -70,14 +70,14 @@ public class InitBean {
 
         blogEntryRepository.persist(
                 new BlogEntry(
-                        null,  // id, wird von Mongo vergeben
+                        null,  // id automatisch
                         "Die Zukunft der KI",
                         users.get(0),
                         "Wie KI unseren Alltag verändert.",
-                        new ArrayList<>(),
-                        50,
+                        List.of(new Date()),
+                        0,
                         true,
-                        new ArrayList<>(), // Noch keine Comments
+                        new ArrayList<>(),
                         categories.get(0)
                 )
         );
@@ -88,8 +88,8 @@ public class InitBean {
                         "Reise durch Skandinavien",
                         users.get(1),
                         "Eine unvergessliche Reise durch Norwegen und Schweden.",
-                        new ArrayList<>(),
-                        120,
+                        List.of(new Date()),
+                        0,
                         true,
                         new ArrayList<>(),
                         categories.get(1)
@@ -102,23 +102,22 @@ public class InitBean {
                         "Gesunde Ernährung im Alltag",
                         users.get(2),
                         "Tipps für eine ausgewogene Ernährung.",
-                        new ArrayList<>(),
-                        30,
+                        List.of(new Date()),
+                        0,
                         false,
                         new ArrayList<>(),
                         categories.get(2)
                 )
         );
 
-        // Weitere Einträge ...
         blogEntryRepository.persist(
                 new BlogEntry(
                         null,
                         "Krafttraining für Anfänger",
                         users.get(3),
                         "Wie du mit dem Training startest.",
-                        new ArrayList<>(),
-                        75,
+                        List.of(new Date()),
+                        0,
                         false,
                         new ArrayList<>(),
                         categories.get(3)
@@ -131,8 +130,8 @@ public class InitBean {
                         "HIIT-Training: Maximale Effizienz",
                         users.get(2),
                         "Warum High-Intensity-Training so effektiv ist.",
-                        new ArrayList<>(),
-                        90,
+                        List.of(new Date()),
+                        0,
                         true,
                         new ArrayList<>(),
                         categories.get(3)
@@ -145,8 +144,8 @@ public class InitBean {
                         "Yoga für mentale Balance",
                         users.get(0),
                         "Wie Yoga Stress abbaut.",
-                        new ArrayList<>(),
-                        45,
+                        List.of(new Date()),
+                        0,
                         true,
                         new ArrayList<>(),
                         categories.get(3)
@@ -159,8 +158,8 @@ public class InitBean {
                         "Minimalismus im Alltag",
                         users.get(1),
                         "Warum weniger oft mehr ist.",
-                        new ArrayList<>(),
-                        110,
+                        List.of(new Date()),
+                        0,
                         false,
                         new ArrayList<>(),
                         categories.get(4)
@@ -173,8 +172,8 @@ public class InitBean {
                         "Produktivität steigern: 5 Tipps",
                         users.get(3),
                         "Effektive Strategien für mehr Fokus.",
-                        new ArrayList<>(),
-                        95,
+                        List.of(new Date()),
+                        0,
                         true,
                         new ArrayList<>(),
                         categories.get(4)
@@ -187,8 +186,8 @@ public class InitBean {
                         "Selbstbewusstsein stärken",
                         users.get(2),
                         "Warum mentale Stärke wichtig ist.",
-                        new ArrayList<>(),
-                        60,
+                        List.of(new Date()),
+                        0,
                         true,
                         new ArrayList<>(),
                         categories.get(4)

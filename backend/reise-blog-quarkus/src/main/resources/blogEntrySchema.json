@@ -12,9 +12,8 @@
         },
         "author": {
           "bsonType": "object",
-          "required": ["name", "email", "username", "firstName", "lastName", "password"],
+          "required": ["email", "username", "firstName", "lastName", "password"],
           "properties": {
-            "name": {"bsonType": "string"},
             "email": {"bsonType": "string", "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"},
             "username": {"bsonType": "string"},
             "firstName": {"bsonType": "string"},
@@ -43,13 +42,12 @@
           "bsonType": "array",
           "items": {
             "bsonType": "object",
-            "required": ["author", "creationDate", "blogEntry", "content"],
+            "required": ["author", "creationDate", "blogEntryId", "content"],
             "properties": {
               "author": {
                 "bsonType": "object",
-                "required": ["name", "email", "username", "firstName", "lastName", "password"],
+                "required": ["email", "username", "firstName", "lastName", "password"],
                 "properties": {
-                  "name": {"bsonType": "string"},
                   "email": {"bsonType": "string", "pattern": "^[^@\\s]+@[^@\\s]+\\.[^@\\s]+$"},
                   "username": {"bsonType": "string"},
                   "firstName": {"bsonType": "string"},
@@ -58,7 +56,7 @@
                 }
               },
               "creationDate": {"bsonType": "date"},
-              "blogEntry": {"bsonType": "objectId"},
+              "blogEntryId": {"bsonType": "objectId"},
               "content": {"bsonType": "string"}
             }
           }
@@ -66,10 +64,10 @@
         "category": {
           "bsonType": "object",
           "properties": {
-            "name": {"bsonType": "string"},
+            "category": {"bsonType": "string"},
             "description": {"bsonType": "string"}
           },
-          "required": ["name"]
+          "required": ["category"]
         }
       }
     }
