@@ -1,7 +1,12 @@
 package at.htlleonding.entity.DTOs;
 
+import lombok.Data;
+
+@Data
 public class BlogUserDTO {
-    public String id;
-    public String username;
-    public String email;
+    private String username;
+    private String firstName;
+    private String lastName;
+    private String email;
+    private String password;
 }

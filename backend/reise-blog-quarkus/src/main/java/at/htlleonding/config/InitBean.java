@@ -48,19 +48,19 @@ public class InitBean {
     }
 
     private void initializeBlogUsers() {
-        blogUserRepository.persist(new BlogUser("john_doe", "John", "Doe", "john.doe@example.com", "password123"));
-        blogUserRepository.persist(new BlogUser("jane_doe", "Jane", "Doe", "jane.doe@example.com", "password456"));
-        blogUserRepository.persist(new BlogUser("max_mustermann", "Max", "Mustermann", "max@example.com", "test123"));
-        blogUserRepository.persist(new BlogUser("alice_smith", "Alice", "Smith", "alice.smith@example.com", "securePass"));
+        blogUserRepository.persist(new BlogUser(null, "john_doe", "John", "Doe", "john.doe@example.com", "password123"));
+        blogUserRepository.persist(new BlogUser(null, "jane_doe", "Jane", "Doe", "jane.doe@example.com", "password456"));
+        blogUserRepository.persist(new BlogUser(null, "max_mustermann", "Max", "Mustermann", "max@example.com", "test123"));
+        blogUserRepository.persist(new BlogUser(null, "alice_smith", "Alice", "Smith", "alice.smith@example.com", "securePass"));
         LOGGER.info("✅ 4 BlogUsers wurden hinzugefügt.");
     }
 
     private void initializeBlogCategories() {
-        blogCategoryRepository.persist(new BlogCategory("Technology"));
-        blogCategoryRepository.persist(new BlogCategory("Travel"));
-        blogCategoryRepository.persist(new BlogCategory("Food"));
-        blogCategoryRepository.persist(new BlogCategory("Fitness"));
-        blogCategoryRepository.persist(new BlogCategory("Lifestyle"));
+        blogCategoryRepository.persist(new BlogCategory(null, "Technology"));
+        blogCategoryRepository.persist(new BlogCategory(null, "Travel"));
+        blogCategoryRepository.persist(new BlogCategory(null, "Food"));
+        blogCategoryRepository.persist(new BlogCategory(null, "Fitness"));
+        blogCategoryRepository.persist(new BlogCategory(null, "Lifestyle"));
         LOGGER.info("✅ 5 BlogCategories wurden hinzugefügt.");
     }
 

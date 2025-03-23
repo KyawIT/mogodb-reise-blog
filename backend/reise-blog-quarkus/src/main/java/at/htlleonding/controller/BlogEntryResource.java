@@ -16,7 +16,7 @@ import java.util.ArrayList;
 import java.util.Date;
 import java.util.List;
 
-@Path("/blogs")
+@Path("/api/blogs")
 @Produces(MediaType.APPLICATION_JSON)
 @Consumes(MediaType.APPLICATION_JSON)
 public class BlogEntryResource {
@@ -192,7 +192,7 @@ public class BlogEntryResource {
         dto.title = entry.title;
         dto.description = entry.description;
         dto.impressionCount = entry.impressionCount;
-        dto.categoryName = (entry.category != null) ? entry.category.category : null;
+        dto.categoryName = (entry.category != null) ? entry.category.getCategory() : null;
 
         List<BlogComment> comments;
         if (limitComments) {
