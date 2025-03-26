@@ -136,7 +136,7 @@ public class BlogSchemaInitializer {
         JsonNode testEntry = objectMapper.createObjectNode()
                 .put("title", "Test Blog")
                 .put("description", "Das ist ein Test-Eintrag.")
-                .put("impressionCount", 100)
+                .put("impressionCount", 0)
                 .put("commentsAllowed", true);
 
         try {

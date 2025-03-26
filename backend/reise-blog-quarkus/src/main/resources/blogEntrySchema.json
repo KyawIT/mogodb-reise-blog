@@ -3,7 +3,7 @@
     "$jsonSchema": {
       "bsonType": "object",
       "title": "BlogEntryValidation",
-      "required": ["title", "author", "description", "editDates", "impressionCount", "commentsAllowed", "blockComments", "category"],
+      "required": ["title", "author", "description", "editDates", "impressionCount", "commentsAllowed", "blockComments", "category", "content"],
       "properties": {
         "title": {
           "bsonType": "string",
@@ -68,6 +68,13 @@
             "description": {"bsonType": "string"}
           },
           "required": ["category"]
+        },
+        "content": {
+          "bsonType": "array",
+          "items": {
+            "bsonType": "string"
+          },
+          "description": "Array of content strings"
         }
       }
     }

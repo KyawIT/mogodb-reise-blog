@@ -8,8 +8,6 @@ import org.bson.types.ObjectId;
 
 import java.util.Date;
 
-@AllArgsConstructor
-@NoArgsConstructor
 @MongoEntity(collection = "BlogComments")
 public class BlogComment {
     @BsonId
@@ -18,4 +16,16 @@ public class BlogComment {
     public Date creationDate;
     public ObjectId blogEntryId;
     public String content;
+
+    public BlogComment() {
+        this.id = new ObjectId();
+    }
+
+    public BlogComment(ObjectId id, BlogUser author, Date creationDate, ObjectId blogEntryId, String content) {
+        this.id = (id != null) ? id : new ObjectId();
+        this.author = author;
+        this.creationDate = creationDate;
+        this.blogEntryId = blogEntryId;
+        this.content = content;
+    }
 }

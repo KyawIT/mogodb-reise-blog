@@ -1,23 +1,16 @@
 package at.htlleonding.repository;
 
 import at.htlleonding.entity.BlogComment;
+import at.htlleonding.entity.BlogEntry;
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
 import jakarta.enterprise.context.ApplicationScoped;
 import org.bson.types.ObjectId;
 
+import java.util.ArrayList;
+import java.util.Collections;
 import java.util.List;
+import java.util.stream.Collectors;
 
 @ApplicationScoped
 public class BlogCommentRepository implements PanacheMongoRepository<BlogComment> {
-
-    public List<BlogComment> findNewestCommentsByEntry(ObjectId blogEntryId) {
-        return find("{'blogEntryId': ?1} sort({'creationDate': -1})", blogEntryId)
-                .page(0, 3)
-                .list();
-    }
-
-    public List<BlogComment> findAllCommentsByEntry(ObjectId blogEntryId) {
-        return find("{'blogEntryId': ?1} sort({'creationDate': -1})", blogEntryId)
-                .list();
-    }
 }

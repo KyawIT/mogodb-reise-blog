@@ -2,10 +2,13 @@ package at.htlleonding.controller;
 
 import at.htlleonding.entity.BlogComment;
 import at.htlleonding.entity.BlogEntry;
+import at.htlleonding.entity.BlogUser;
 import at.htlleonding.entity.DTOs.BlogCommentDTO;
 import at.htlleonding.entity.DTOs.BlogEntryDTO;
+import at.htlleonding.repository.BlogCategoryRepository;
 import at.htlleonding.repository.BlogCommentRepository;
 import at.htlleonding.repository.BlogEntryRepository;
+import at.htlleonding.repository.BlogUserRepository;
 import jakarta.inject.Inject;
 import jakarta.ws.rs.*;
 import jakarta.ws.rs.core.MediaType;
@@ -13,6 +16,7 @@ import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -25,7 +29,10 @@ public class BlogEntryResource {
     BlogEntryRepository blogEntryRepository;
 
     @Inject
-    BlogCommentRepository blogCommentRepository;
+    BlogUserRepository blogUserRepository;
+
+    @Inject
+    BlogCategoryRepository blogCategoryRepository;
 
     // ------------------------------------------------
     // A) GET /blogs : Alle BlogEntries mit JEWEILS den ersten 3 Kommentaren
@@ -78,7 +85,7 @@ public class BlogEntryResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        List<BlogComment> allComments = blogCommentRepository.findAllCommentsByEntry(objectId);
+        List<BlogComment> allComments = blogEntryRepository.findAllCommentsByEntry(objectId);
 
         List<BlogCommentDTO> commentDtos = new ArrayList<>();
         for (BlogComment bc : allComments) {
@@ -125,13 +132,18 @@ public class BlogEntryResource {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
 
-        entry.title = dto.title;
-        entry.description = dto.description;
-        entry.impressionCount = dto.impressionCount;
-
-        if (entry.editDates == null) {
-            entry.editDates = new ArrayList<>();
+        if (dto.title != null && !dto.title.trim().isEmpty()) {
+            entry.title = dto.title;
         }
+
+        if (dto.description != null && !dto.description.trim().isEmpty()) {
+            entry.description = dto.description;
+        }
+
+        if (dto.content != null && !dto.content.isEmpty()) {
+            entry.content = dto.content.stream().toList();
+        }
+
         entry.editDates.add(new Date());
 
         blogEntryRepository.update(entry);
@@ -148,7 +160,7 @@ public class BlogEntryResource {
         if (commentId == null) {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
-        BlogComment bc = blogCommentRepository.findById(commentId);
+        BlogComment bc = blogEntryRepository.findCommentByIdInEmbedded(commentId);
         if (bc == null) {
             return Response.status(Response.Status.NOT_FOUND).build();
         }
@@ -167,15 +179,90 @@ public class BlogEntryResource {
             return Response.status(Response.Status.BAD_REQUEST).build();
         }
 
-        BlogComment comment = blogCommentRepository.findById(commentId);
-        if (comment == null) {
-            return Response.status(Response.Status.NOT_FOUND).build();
+        List<BlogEntry> allEntries = blogEntryRepository.listAll();
+
+        boolean found = false;
+        for (BlogEntry entry : allEntries) {
+            if (entry.blockComments != null) {
+                for (BlogComment comment : entry.blockComments) {
+                    if (commentId.equals(comment.id)) {
+                        comment.content = dto.content;
+                        blogEntryRepository.update(entry);
+                        found = true;
+                        break;
+                    }
+                }
+            }
+            if (found) {
+                break;
+            }
+        }
+        if (!found) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Comment not found for id " + commentIdHex)
+                    .build();
+        }
+        return Response.ok("Comment updated").build();
+    }
+
+    // POST /blogs : Create a new blog entry
+    @POST
+    public Response createBlogEntry(BlogEntryDTO dto, ObjectId userId) {
+        if (dto == null || dto.title == null || dto.title.trim().isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Title is required").build();
         }
 
-        comment.content = dto.content;
-        blogCommentRepository.update(comment);
+        BlogEntry entry = new BlogEntry();
+        entry.title = dto.title;
+        entry.author = blogUserRepository.find("id =? 1", userId).stream().toList().getFirst();
+        entry.description = dto.description;
+        entry.impressionCount = dto.impressionCount;
+        entry.commentsAllowed = dto.commentsAllowed;
+        entry.editDates = List.of(new Date());
+        entry.content = (dto.content != null)
+                ? new ArrayList<>(dto.content)
+                : new ArrayList<>();
+        entry.blockComments = new ArrayList<>();
+        entry.category = blogCategoryRepository.find("category =? 1", dto.categoryName).stream().toList().getFirst();
+        blogEntryRepository.persist(entry);
+        return Response.status(Response.Status.CREATED).entity("Blog entry created").build();
+    }
 
-        return Response.ok("Comment updated").build();
+    // POST /blogs/{id}/comments : Add a comment to a blog with commentsAllowed = true
+    @POST
+    @Path("/{id}/comments")
+    public Response addCommentToBlog(@PathParam("id") String idHex, BlogCommentDTO commentDto, ObjectId userId) {
+        ObjectId objectId = toObjectIdOrNull(idHex);
+        if (objectId == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid blog ID").build();
+        }
+
+        BlogEntry entry = blogEntryRepository.findById(objectId);
+        if (entry == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Blog entry not found").build();
+        }
+
+        if (!entry.commentsAllowed) {
+            return Response.status(Response.Status.FORBIDDEN).entity("Comments are not allowed for this blog").build();
+        }
+
+        if (commentDto == null || commentDto.content == null || commentDto.content.trim().isEmpty()) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Comment content is required").build();
+        }
+
+        BlogComment comment = new BlogComment();
+        comment.content = commentDto.content;
+        comment.creationDate = new Date();
+        comment.author = blogUserRepository.find("id =? 1", userId).stream().toList().getFirst();
+        comment.blogEntryId = entry.id;
+
+        if (entry.blockComments == null) {
+            entry.blockComments = new ArrayList<>();
+        }
+        entry.blockComments.add(comment);
+
+        blogEntryRepository.update(entry);
+        return Response.status(Response.Status.CREATED).entity("Comment added to blog").build();
     }
 
     private ObjectId toObjectIdOrNull(String idHex) {
@@ -193,12 +280,15 @@ public class BlogEntryResource {
         dto.description = entry.description;
         dto.impressionCount = entry.impressionCount;
         dto.categoryName = (entry.category != null) ? entry.category.getCategory() : null;
+        dto.commentsAllowed = entry.commentsAllowed;
+        dto.creationDate = entry.editDates.getFirst();
+        dto.content = new ArrayList<>(entry.content).subList(0,1);
 
         List<BlogComment> comments;
         if (limitComments) {
-            comments = blogCommentRepository.findNewestCommentsByEntry(entry.id);
+            comments = blogEntryRepository.findNewestCommentsByEntry(entry.id);
         } else {
-            comments = blogCommentRepository.findAllCommentsByEntry(entry.id);
+            comments = blogEntryRepository.findAllCommentsByEntry(entry.id);
         }
 
         List<BlogCommentDTO> cdtos = new ArrayList<>();
