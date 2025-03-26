@@ -2,11 +2,9 @@ package at.htlleonding.controller;
 
 import at.htlleonding.entity.BlogComment;
 import at.htlleonding.entity.BlogEntry;
-import at.htlleonding.entity.BlogUser;
 import at.htlleonding.entity.DTOs.BlogCommentDTO;
 import at.htlleonding.entity.DTOs.BlogEntryDTO;
 import at.htlleonding.repository.BlogCategoryRepository;
-import at.htlleonding.repository.BlogCommentRepository;
 import at.htlleonding.repository.BlogEntryRepository;
 import at.htlleonding.repository.BlogUserRepository;
 import jakarta.inject.Inject;
@@ -16,7 +14,6 @@ import jakarta.ws.rs.core.Response;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
 
@@ -34,9 +31,7 @@ public class BlogEntryResource {
     @Inject
     BlogCategoryRepository blogCategoryRepository;
 
-    // ------------------------------------------------
-    // A) GET /blogs : Alle BlogEntries mit JEWEILS den ersten 3 Kommentaren
-    // ------------------------------------------------
+    // GET: Alle BlogEntries mit JEWEILS den ersten 3 Kommentaren
     @GET
     public List<BlogEntryDTO> getAllBlogs() {
         List<BlogEntry> all = blogEntryRepository.listAll();
@@ -47,10 +42,7 @@ public class BlogEntryResource {
         return dtos;
     }
 
-    // ------------------------------------------------
-    // B) GET /blogs/{id} : Einen bestimmten BlogEntry
-    //    ebenfalls mit NUR den ersten 3 Kommentaren
-    // ------------------------------------------------
+    //GET: Einen bestimmten BlogEntry ebenfalls mit NUR den ersten 3 Kommentaren
     @GET
     @Path("/{id}")
     public Response getBlog(@PathParam("id") String idHex) {
@@ -70,9 +62,7 @@ public class BlogEntryResource {
         return Response.ok(dto).build();
     }
 
-    // ------------------------------------------------
-    // C) GET /blogs/{id}/comments : "Show more" => ALLE Kommentare
-    // ------------------------------------------------
+    // C) GET: "Show more" => ALLE Kommentare eines Blogs
     @GET
     @Path("/{id}/comments")
     public Response getAllCommentsOfBlog(@PathParam("id") String idHex) {
@@ -95,9 +85,7 @@ public class BlogEntryResource {
         return Response.ok(commentDtos).build();
     }
 
-    // ------------------------------------------------
-    // D) PATCH /blogs/{id}/impressions : Erhöht impressionCount um +1
-    // ------------------------------------------------
+    //PATCH: Erhöht impressionCount um +1
     @PATCH
     @Path("/{id}/impressions")
     public Response patchImpressions(@PathParam("id") String idHex) {
@@ -117,9 +105,7 @@ public class BlogEntryResource {
         // 204: erfolgreich, kein Content
     }
 
-    // ------------------------------------------------
-    // E) PUT /blogs/{id} : BlogEntry updaten + aktuelles Datum zu editDates hinzufügen
-    // ------------------------------------------------
+    //PUT: BlogEntry updaten + aktuelles Datum zu editDates hinzufügen
     @PUT
     @Path("/{id}")
     public Response updateBlogEntry(@PathParam("id") String idHex, BlogEntryDTO dto) {
@@ -150,9 +136,7 @@ public class BlogEntryResource {
         return Response.ok("Blog updated").build();
     }
 
-    // ------------------------------------------------
-    // F) GET /comments/{commentId} : Einen Kommentar abrufen
-    // ------------------------------------------------
+    //GET: Einen Kommentar abrufen
     @GET
     @Path("/comments/{commentId}")
     public Response getComment(@PathParam("commentId") String commentIdHex) {
@@ -168,9 +152,7 @@ public class BlogEntryResource {
         return Response.ok(dto).build();
     }
 
-    // ------------------------------------------------
-    // G) PUT /comments/{commentId} : Kommentartext ändern
-    // ------------------------------------------------
+    //PUT: Kommentartext ändern
     @PUT
     @Path("/comments/{commentId}")
     public Response updateComment(@PathParam("commentId") String commentIdHex, BlogCommentDTO dto) {
@@ -205,7 +187,7 @@ public class BlogEntryResource {
         return Response.ok("Comment updated").build();
     }
 
-    // POST /blogs : Create a new blog entry
+    // POST: Einen neuen Blog Entry erstellen
     @POST
     public Response createBlogEntry(BlogEntryDTO dto, ObjectId userId) {
         if (dto == null || dto.title == null || dto.title.trim().isEmpty()) {
@@ -228,7 +210,7 @@ public class BlogEntryResource {
         return Response.status(Response.Status.CREATED).entity("Blog entry created").build();
     }
 
-    // POST /blogs/{id}/comments : Add a comment to a blog with commentsAllowed = true
+    // POST: Einen Kommentar zu einem Blog hinzufügen jedoch muss commentsAllowed = true sein
     @POST
     @Path("/{id}/comments")
     public Response addCommentToBlog(@PathParam("id") String idHex, BlogCommentDTO commentDto, ObjectId userId) {

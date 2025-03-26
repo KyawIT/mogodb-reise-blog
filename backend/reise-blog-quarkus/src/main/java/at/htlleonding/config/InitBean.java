@@ -33,7 +33,7 @@ public class InitBean {
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(InitBean.class));
 
     void onStart(@Observes StartupEvent ev) {
-        LOGGER.info("🔄 Fuege Beispiel-Daten in MongoDB ein...");
+        LOGGER.info("Fuege Beispiel-Daten in MongoDB ein...");
 
         if (blogUserRepository.count() == 0) {
             initializeBlogUsers();

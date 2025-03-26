@@ -29,14 +29,11 @@ public class BlogEntryRepository implements PanacheMongoRepository<BlogEntry> {
     }
 
     public List<BlogComment> findAllCommentsByEntry(ObjectId blogEntryId) {
-        // 1. BlogEntry laden
         BlogEntry entry = findById(blogEntryId);
         if (entry == null) {
-            // Kein Eintrag -> Keine Kommentare
             return Collections.emptyList();
         }
-        // 2. Alle embedded Kommentare zurückgeben
-        return entry.blockComments; // Kann schon gefüllt oder leer sein
+        return entry.blockComments;
     }
 
     public List<BlogComment> findNewestCommentsByEntry(ObjectId blogEntryId) {
@@ -44,11 +41,9 @@ public class BlogEntryRepository implements PanacheMongoRepository<BlogEntry> {
         if (entry == null) {
             return Collections.emptyList();
         }
-        // 3. Java-Sortierung nach creationDate absteigend
         List<BlogComment> sorted = new ArrayList<>(entry.blockComments);
         sorted.sort((c1, c2) -> c2.creationDate.compareTo(c1.creationDate));
 
-        // 4. Nur die ersten 3 zurückgeben
         if (sorted.size() > 3) {
             return sorted.subList(0, 3);
         } else {

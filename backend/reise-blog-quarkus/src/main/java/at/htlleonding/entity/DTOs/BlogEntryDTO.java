@@ -11,13 +11,13 @@ import java.util.List;
 @Getter
 @Setter
 public class BlogEntryDTO {
-    public String id;            // z. B. als Hex-String
+    public String id;
     public String title;
     public String description;
     public int impressionCount;
     public boolean commentsAllowed;
     public Date creationDate;
-    public List<String> content;  // Array where index 0=text, 1=base64 links, 2=base64 images
-    public String categoryName;  // falls du die Kategorie nur als String ausgeben möchtest
-    public List<BlogCommentDTO> comments;  // entweder max. 3 oder alle
+    public List<String> content;
+    public String categoryName;
+    public List<BlogCommentDTO> comments;
 }

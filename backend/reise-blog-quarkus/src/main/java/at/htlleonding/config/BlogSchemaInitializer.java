@@ -36,25 +36,25 @@ public class BlogSchemaInitializer {
 
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("blogEntrySchema.json")) {
             if (is == null) {
-                throw new RuntimeException("❌ Schema-Datei blogEntrySchema.json nicht gefunden!");
+                throw new RuntimeException("Schema-Datei blogEntrySchema.json nicht gefunden!");
             }
             JsonSchemaFactory factory = JsonSchemaFactory.getInstance(SpecVersion.VersionFlag.V7);
             this.jsonSchema = factory.getSchema(is);
         } catch (Exception e) {
-            throw new RuntimeException("❌ Fehler beim Laden des Schemas: " + e.getMessage(), e);
+            throw new RuntimeException("Fehler beim Laden des Schemas: " + e.getMessage(), e);
         }
     }
 
     void onStart(@Observes StartupEvent event) {
-        System.out.println("🔄 BlogSchemaInitializer wird ausgeführt...");
+        System.out.println("BlogSchemaInitializer wird ausgeführt...");
 
         MongoDatabase database = waitForDatabase("blogdb@localhost");
         if (database == null) {
-            System.out.println("❌ MongoDB konnte nicht erreicht werden. Starte Quarkus nicht.");
+            System.out.println("MongoDB konnte nicht erreicht werden. Starte Quarkus nicht.");
             return;
         }
 
-        System.out.println("✅ Verbindung zu MongoDB erfolgreich!");
+        System.out.println("Verbindung zu MongoDB erfolgreich!");
 
         createCollectionIfNotExists(database, "BlogEntries");
         createCollectionIfNotExists(database, "BlogUsers");
@@ -74,7 +74,7 @@ public class BlogSchemaInitializer {
                 return database;
             } catch (Exception e) {
                 attempts++;
-                System.out.println("⏳ MongoDB nicht verfügbar. Warte " + WAIT_TIME_SECONDS + " Sekunden...");
+                System.out.println("MongoDB nicht verfügbar. Warte " + WAIT_TIME_SECONDS + " Sekunden...");
                 try {
                     TimeUnit.SECONDS.sleep(WAIT_TIME_SECONDS);
                 } catch (InterruptedException ex) {
@@ -90,23 +90,23 @@ public class BlogSchemaInitializer {
         List<String> collections = database.listCollectionNames().into(new java.util.ArrayList<>());
         if (!collections.contains(collectionName)) {
             database.createCollection(collectionName);
-            System.out.println("✅ Collection '" + collectionName + "' wurde erstellt.");
+            System.out.println("Collection '" + collectionName + "' wurde erstellt.");
         } else {
-            System.out.println("✅ Collection '" + collectionName + "' existiert bereits.");
+            System.out.println("Collection '" + collectionName + "' existiert bereits.");
         }
     }
 
     private void applySchemaToBlogEntries(MongoDatabase database) {
         try (InputStream is = getClass().getClassLoader().getResourceAsStream("blogEntrySchema.json")) {
             if (is == null) {
-                System.out.println("❌ Konnte blogEntrySchema.json nicht finden!");
+                System.out.println("Konnte blogEntrySchema.json nicht finden!");
                 return;
             }
 
             Document topLevelDoc = Document.parse(new String(is.readAllBytes()));
             Document validatorDoc = topLevelDoc.get("validator", Document.class);
             if (validatorDoc == null) {
-                System.out.println("❌ JSON-Datei enthält kein 'validator'-Feld!");
+                System.out.println("JSON-Datei enthält kein 'validator'-Feld!");
                 return;
             }
 
@@ -117,18 +117,18 @@ public class BlogSchemaInitializer {
                             .append("validationAction", "error")
             );
 
-            System.out.println("✅ Schema auf 'BlogEntries' angewendet!");
+            System.out.println("Schema auf 'BlogEntries' angewendet!");
         } catch (Exception e) {
-            System.out.println("❌ Fehler beim Anwenden des Schemas: " + e.getMessage());
+            System.out.println("Fehler beim Anwenden des Schemas: " + e.getMessage());
         }
     }
 
     public void validateBlogEntry(JsonNode blogEntry) {
         Set<ValidationMessage> errors = jsonSchema.validate(blogEntry);
         if (!errors.isEmpty()) {
-            throw new IllegalArgumentException("🚨 Ungültige Daten: " + errors);
+            throw new IllegalArgumentException("Ungültige Daten: " + errors);
         }
-        System.out.println("✅ Blog Entry ist gültig: " + blogEntry);
+        System.out.println("Blog Entry ist gültig: " + blogEntry);
     }
 
 
@@ -141,9 +141,9 @@ public class BlogSchemaInitializer {
 
         try {
             validateBlogEntry(testEntry);
-            System.out.println("✅ Test-Validierung erfolgreich!");
+            System.out.println("Test-Validierung erfolgreich!");
         } catch (IllegalArgumentException e) {
-            System.out.println("❌ Test-Validierung fehlgeschlagen: " + e.getMessage());
+            System.out.println("Test-Validierung fehlgeschlagen: " + e.getMessage());
         }
     }
 }

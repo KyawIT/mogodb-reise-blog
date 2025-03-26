@@ -22,7 +22,7 @@ public class BlogEntry {
     public List<Date> editDates;
     public int impressionCount;
     public boolean commentsAllowed;
-    public List<String> content;  // Array where index 0=text, 1=base64 links, 2=base64 images
+    public List<String> content;
     public List<BlogComment> blockComments;
     public BlogCategory category;
 }
