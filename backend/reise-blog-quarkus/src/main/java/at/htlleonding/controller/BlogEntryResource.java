@@ -247,6 +247,67 @@ public class BlogEntryResource {
         return Response.status(Response.Status.CREATED).entity("Comment added to blog").build();
     }
 
+    //DELETE: Löscht einen BlogEntry
+    @DELETE
+    @Path("/{id}")
+    public Response deleteBlog(@PathParam("id") String idHex) {
+        ObjectId objectId = toObjectIdOrNull(idHex);
+        if (objectId == null) {
+            return Response.status(Response.Status.BAD_REQUEST)
+                    .entity("Invalid blog ID: " + idHex)
+                    .build();
+        }
+
+        BlogEntry entry = blogEntryRepository.findById(objectId);
+        if (entry == null) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("BlogEntry not found for id " + idHex)
+                    .build();
+        }
+
+        blogEntryRepository.delete(entry);
+        return Response.noContent().build();
+    }
+
+    //DELETE: Löscht einen Kommentar eines EntryBlogs
+    @DELETE
+    @Path("/{blogId}/comments/{commentId}")
+    public Response deleteComment(
+            @PathParam("blogId") String blogIdHex,
+            @PathParam("commentId") String commentIdHex
+    ) {
+        ObjectId blogObjectId = toObjectIdOrNull(blogIdHex);
+        if (blogObjectId == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid blog ID").build();
+        }
+
+        BlogEntry entry = blogEntryRepository.findById(blogObjectId);
+        if (entry == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Blog entry not found").build();
+        }
+
+        ObjectId commentObjectId = toObjectIdOrNull(commentIdHex);
+        if (commentObjectId == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid comment ID").build();
+        }
+
+        boolean removed = false;
+        if (entry.blockComments != null) {
+            removed = entry.blockComments.removeIf(c -> commentObjectId.equals(c.id));
+        }
+
+        if (!removed) {
+            return Response.status(Response.Status.NOT_FOUND)
+                    .entity("Comment not found for id " + commentIdHex)
+                    .build();
+        }
+
+        blogEntryRepository.update(entry);
+        return Response.noContent().build();
+    }
+
+
+
     private ObjectId toObjectIdOrNull(String idHex) {
         try {
             return new ObjectId(idHex);
