@@ -2,8 +2,12 @@ package at.htlleonding.repository;
 
 import at.htlleonding.entity.BlogComment;
 import at.htlleonding.entity.BlogEntry;
+import com.mongodb.client.model.IndexOptions;
+import com.mongodb.client.model.Indexes;
 import io.quarkus.mongodb.panache.PanacheMongoRepository;
+import io.quarkus.runtime.StartupEvent;
 import jakarta.enterprise.context.ApplicationScoped;
+import jakarta.enterprise.event.Observes;
 import org.bson.types.ObjectId;
 
 import java.util.ArrayList;
@@ -12,6 +16,18 @@ import java.util.List;
 
 @ApplicationScoped
 public class BlogEntryRepository implements PanacheMongoRepository<BlogEntry> {
+
+    void onStart(@Observes StartupEvent ev) {
+        mongoCollection().createIndex(
+                Indexes.compoundIndex(
+                        Indexes.ascending("title"),
+                        Indexes.ascending("author.username")
+                ),
+                new IndexOptions().unique(true)
+        );
+        System.out.println("Unique compound index on (title + author.username) created successfully.");
+    }
+
     public List<BlogComment> findAllCommentsByEntry(ObjectId blogEntryId) {
         // 1. BlogEntry laden
         BlogEntry entry = findById(blogEntryId);

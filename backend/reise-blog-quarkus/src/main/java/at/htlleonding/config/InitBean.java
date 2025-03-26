@@ -33,7 +33,7 @@ public class InitBean {
     private static final Logger LOGGER = Logger.getLogger(String.valueOf(InitBean.class));
 
     void onStart(@Observes StartupEvent ev) {
-        LOGGER.info("🔄 Füge Beispiel-Daten in MongoDB ein...");
+        LOGGER.info("🔄 Fuege Beispiel-Daten in MongoDB ein...");
 
         if (blogUserRepository.count() == 0) {
             initializeBlogUsers();
@@ -53,7 +53,7 @@ public class InitBean {
         blogUserRepository.persist(new BlogUser(null, "jane_doe", "Jane", "Doe", "jane.doe@example.com", "password456"));
         blogUserRepository.persist(new BlogUser(null, "max_mustermann", "Max", "Mustermann", "max@example.com", "test123"));
         blogUserRepository.persist(new BlogUser(null, "alice_smith", "Alice", "Smith", "alice.smith@example.com", "securePass"));
-        LOGGER.info("✅ 4 BlogUsers wurden hinzugefügt.");
+        LOGGER.info("4 BlogUsers wurden hinzugefuegt.");
     }
 
     private void initializeBlogCategories() {
@@ -62,7 +62,7 @@ public class InitBean {
         blogCategoryRepository.persist(new BlogCategory(null, "Food"));
         blogCategoryRepository.persist(new BlogCategory(null, "Fitness"));
         blogCategoryRepository.persist(new BlogCategory(null, "Lifestyle"));
-        LOGGER.info("✅ 5 BlogCategories wurden hinzugefügt.");
+        LOGGER.info("5 BlogCategories wurden hinzugefuegt.");
     }
 
     private void initializeBlogEntries() {
@@ -249,7 +249,7 @@ public class InitBean {
                 )
         );
 
-        LOGGER.info("✅ 9 BlogEntries wurden hinzugefügt.");
+        LOGGER.info("9 BlogEntries wurden hinzugefuegt.");
     }
 
 
@@ -285,7 +285,7 @@ public class InitBean {
                 blogEntryRepository.update(entry);
             }
 
-            LOGGER.info("✅ Eingebettete Kommentare zu den BlogEntries hinzugefügt.");
+            LOGGER.info("Eingebettete Kommentare zu den BlogEntries hinzugefügt.");
         }
     }
 }
