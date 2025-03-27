@@ -1,3 +1,8 @@
 <h1>Reiseblog</h1>
 
-<router-outlet />
+@if (loginService.user !== null) {
+    <router-outlet />
+}
+@else {
+    <app-login />
+}
