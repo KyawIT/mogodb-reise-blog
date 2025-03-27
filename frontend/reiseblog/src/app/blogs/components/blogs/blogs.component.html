@@ -32,6 +32,18 @@
                             Load More
                         </button>
                     }
+                    <button class="btn btn-outline-info m-2" (click)="showNewCommentField(blog)">
+                        Add Comment
+                    </button>
+                    @if (blogCommentFieldsShown(blog)) {
+                        <div class="card card-body m-1">
+                            <label for="comment">New Comment</label>
+                            <input type="text" class="form-control" id="comment" [(ngModel)]="getCommentField(blog).content" />
+                            <label for="authorUsername">Author Username</label>
+                            <input type="text" class="form-control" id="authorUsername" [(ngModel)]="getCommentField(blog).authorUsername" />
+                            <button class="btn btn-primary m-2" (click)="addBlogComment(blog)">Add Comment</button>
+                        </div>
+                    }
                 </div>
             </li>
         </ul>

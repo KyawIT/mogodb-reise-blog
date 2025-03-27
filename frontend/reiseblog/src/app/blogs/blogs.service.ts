@@ -33,4 +33,12 @@ export class BlogsService {
     }
     return false;
   }
+  
+  public async addBlogComment(blog:Blog, comment:BlogComment):Promise<boolean> {
+    const response = await this.backendService.httpPostRequest('/blogs/comments?entryId=' + blog.id, comment);
+    if (!response) {
+      return true;
+    }
+    return false;
+  }
 }

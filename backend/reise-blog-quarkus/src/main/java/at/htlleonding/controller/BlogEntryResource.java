@@ -206,6 +206,8 @@ public class BlogEntryResource {
         BlogComment newComment = new BlogComment();
         newComment.id = new ObjectId(); // Generate a new ObjectId for the comment
         newComment.content = dto.content;
+        newComment.creationDate = new Date();
+        newComment.blogEntryId = entry.id;
         List<BlogUser> users = blogUserRepository.find("username = ?1", dto.authorUsername).list();
         if (users.isEmpty()) {
             return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
