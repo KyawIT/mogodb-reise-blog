@@ -1,12 +1,11 @@
 @for (blog of blogs(); track $index) {
     <div class="card card-body m-4">
+        <h2>{{blog.title}}</h2>
         <ul>
-            <li><strong>ID:</strong> {{blog.id}}</li>
-            <li><strong>Title:</strong> {{blog.title}}</li>
             <li><strong>Description:</strong> {{blog.description}}</li>
             <li><strong>Impression Count:</strong> {{blog.impressionCount}}</li>
-            <li><strong>Comments Allowed:</strong> {{blog.commentsAllowed}}</li>
             <li><strong>Creation Date:</strong> {{blog.creationDate}}</li>
+            <li><strong>Category:</strong> {{blog.categoryName}}</li>
             <li><strong>Content:</strong> 
                 <div>
                     @for (content of blog.content; track $index) {
@@ -16,18 +15,21 @@
                     }
                 </div>
             </li>
-            <li><strong>Category Name:</strong> {{blog.categoryName}}</li>
             <li><strong>Comments:</strong> 
                 <div>
                     @for (comment of blog.comments; track $index) {
                         <div class="card card-body m-1">
                             <ul>
-                                <li><strong>ID:</strong> {{comment.id}}</li>
                                 <li><strong>Author:</strong> {{comment.authorUsername}}</li>
                                 <li><strong>Creation Date:</strong> {{comment.creationDate}}</li>
                                 <li><strong>Content:</strong> {{comment.content}}</li>
                             </ul>
                         </div>
+                    }
+                    @if (blog.comments.length === 3 && !shownComments().includes(blog)) {
+                        <button class="btn btn-outline-secondary m-2" (click)="showMoreComments(blog)">
+                            Load More
+                        </button>
                     }
                 </div>
             </li>

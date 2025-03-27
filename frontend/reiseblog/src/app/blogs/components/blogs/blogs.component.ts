@@ -1,6 +1,7 @@
 import { Component, signal } from '@angular/core';
 import { Blog } from '../../../models/blog';
 import { BlogsService } from '../../blogs.service';
+import { BlogComment } from '../../../models/blog.comment';
 
 @Component({
   selector: 'app-blogs',
@@ -10,6 +11,7 @@ import { BlogsService } from '../../blogs.service';
 })
 export class BlogsComponent {
   public blogs = signal<Blog[]>([]);
+  public shownComments = signal<Blog[]>([]);
 
   constructor(private blogsService:BlogsService) {
     this.loadBlogs();
@@ -24,5 +26,21 @@ export class BlogsComponent {
         alert('Failed to load blogs');
       }
     });
+  }
+
+  public async showMoreComments(blog:Blog) {
+    const comments:BlogComment[]|null = await this.blogsService.getAllCommentsOfBlog(blog);
+
+    if (comments === null) {
+      alert('Failed to load comments');
+      return;
+    }
+    this.shownComments.set(this.shownComments().concat(blog));
+    this.blogs.set(this.blogs().map(b => {
+      if (b.id === blog.id) {
+        b.comments = comments;
+      }
+      return b;
+    }));
   }
 }
