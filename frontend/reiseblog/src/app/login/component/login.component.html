@@ -1,1 +1,24 @@
-<p>login works!</p>
+<button class="btn btn-outline-secondary m-2" (click)="isSignupCollapsed.set(!isSignupCollapsed())">
+    Sign Up
+</button>
+<div #collapse="ngbCollapse" [(ngbCollapse)]="isSignupCollapsed">
+    <div class="card">
+        <div class="card-body">
+            <app-new-account />
+        </div>
+    </div>
+</div>
+<div class="m-2">
+
+</div>
+
+<button class="btn btn-outline-secondary m-2" (click)="isLoginCollapsed.set(!isLoginCollapsed())">
+    Log In
+</button>
+<div #collapse="ngbCollapse" [(ngbCollapse)]="isLoginCollapsed">
+    <div class="card">
+        <div class="card-body">
+            <app-existing-account />
+        </div>
+    </div>
+</div>
