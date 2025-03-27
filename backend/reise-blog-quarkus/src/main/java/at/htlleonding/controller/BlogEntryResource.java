@@ -2,8 +2,10 @@ package at.htlleonding.controller;
 
 import at.htlleonding.entity.BlogComment;
 import at.htlleonding.entity.BlogEntry;
+import at.htlleonding.entity.BlogUser;
 import at.htlleonding.entity.DTOs.BlogCommentDTO;
 import at.htlleonding.entity.DTOs.BlogEntryDTO;
+import at.htlleonding.entity.DTOs.BlogUserDTO;
 import at.htlleonding.repository.BlogCategoryRepository;
 import at.htlleonding.repository.BlogEntryRepository;
 import at.htlleonding.repository.BlogUserRepository;
@@ -185,6 +187,39 @@ public class BlogEntryResource {
                     .build();
         }
         return Response.ok("Comment updated").build();
+    }
+
+    // POST: Einen neuen Kommentar hinzufügen
+    @POST
+    @Path("/comments")
+    public Response addComment(@QueryParam("entryId") String entryIdHex, BlogCommentDTO dto) {
+        ObjectId entryId = toObjectIdOrNull(entryIdHex);
+        if (entryId == null) {
+            return Response.status(Response.Status.BAD_REQUEST).entity("Invalid entry ID").build();
+        }
+
+        BlogEntry entry = blogEntryRepository.findById(entryId);
+        if (entry == null) {
+            return Response.status(Response.Status.NOT_FOUND).entity("Blog entry not found for id " + entryIdHex).build();
+        }
+
+        BlogComment newComment = new BlogComment();
+        newComment.id = new ObjectId(); // Generate a new ObjectId for the comment
+        newComment.content = dto.content;
+        List<BlogUser> users = blogUserRepository.find("username = ?1", dto.authorUsername).list();
+        if (users.isEmpty()) {
+            return Response.status(Response.Status.NOT_FOUND).entity("User not found").build();
+        }
+        newComment.author = users.get(0);
+
+        if (entry.blockComments == null) {
+            entry.blockComments = new ArrayList<>();
+        }
+        entry.blockComments.add(newComment);
+
+        blogEntryRepository.update(entry);
+
+        return Response.status(Response.Status.CREATED).entity("Comment added").build();
     }
 
     // POST: Einen neuen Blog Entry erstellen
