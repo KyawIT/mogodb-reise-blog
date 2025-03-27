@@ -43,4 +43,20 @@ export class BlogsComponent {
       return b;
     }));
   }
+
+  public addBlogImpression(blog:Blog) {
+    this.blogsService.addBlogImpression(blog).then(success => {
+      if (success) {
+        this.blogs.set(this.blogs().map(b => {
+          if (b.id === blog.id) {
+            b.impressionCount++;
+          }
+          return b;
+        }));
+        console.log('Blog impression added');
+      } else {
+        alert('Failed to add blog impression');
+      }
+    });
+  }
 }

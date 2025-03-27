@@ -3,7 +3,8 @@
         <h2>{{blog.title}}</h2>
         <ul>
             <li><strong>Description:</strong> {{blog.description}}</li>
-            <li><strong>Impression Count:</strong> {{blog.impressionCount}}</li>
+            <li><strong>Impression Count:</strong> {{blog.impressionCount}} 
+                <button class="btn btn-sm btn-outline-success" (click)="addBlogImpression(blog)">Add Impression</button></li>
             <li><strong>Creation Date:</strong> {{blog.creationDate}}</li>
             <li><strong>Category:</strong> {{blog.categoryName}}</li>
             <li><strong>Content:</strong> 

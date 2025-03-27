@@ -18,11 +18,19 @@ export class BlogsService {
     return null;
   }
 
-  public async getAllCommentsOfBlog(blog:Blog):Promise<BlogComment[]|null> {
+  public async getAllCommentsOfBlog(blog:Blog):Promise<BlogComment[]|null> {  
     const response = await this.backendService.httpGetRequest('/blogs/' + blog.id + '/comments');
     if (response) {
       return response;
     }
     return null;
+  }
+
+  public async addBlogImpression(blog:Blog):Promise<boolean> {
+    const response = await this.backendService.httpPatchRequest('/blogs/' + blog.id + '/impressions', blog);
+    if (!response) {
+      return true;
+    }
+    return false;
   }
 }
