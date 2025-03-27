@@ -3,10 +3,11 @@ import { Blog } from '../../../models/blog';
 import { BlogsService } from '../../blogs.service';
 import { BlogComment } from '../../../models/blog.comment';
 import { FormsModule } from '@angular/forms';
+import { CommonModule } from '@angular/common';
 
 @Component({
   selector: 'app-blogs',
-  imports: [FormsModule],
+  imports: [FormsModule, CommonModule],
   templateUrl: './blogs.component.html',
   styleUrl: './blogs.component.scss'
 })
@@ -63,6 +64,12 @@ export class BlogsComponent {
   }
 
   public showNewCommentField(blog:Blog) {
+    if (this.blogCommentFieldsShown(blog)) {
+      this.shownNewCommentFields.set(this.shownNewCommentFields()
+        .filter(c => c.blog.id !== blog.id));
+      return;
+    }
+
     this.shownNewCommentFields.set(this.shownNewCommentFields()
       .concat({blog: blog, comment: {authorUsername: '', content: '', creationDate: new Date(), id: ''}}));
   }
@@ -77,6 +84,13 @@ export class BlogsComponent {
   public async addBlogComment(blog:Blog) {
     const comment:BlogComment = this.shownNewCommentFields()
       .find(c => c.blog.id === blog.id)!.comment;
+
+    this.blogs.set(this.blogs().map(b => {
+      if (b.id === blog.id) {
+        b.comments.push(comment);
+      }
+      return b;
+    }));
 
     await this.blogsService.addBlogComment(blog, comment).then(success => {
       if (success) {
