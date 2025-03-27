@@ -1,8 +1,10 @@
-<h1>Reiseblog</h1>
+<div class="container">
+    <h1>Reiseblog</h1>
 
-@if (loginService.user !== null && false) {
-    <router-outlet />
-}
-@else {
-    <app-login />
-}
+    @if (loginService.user !== null && false) {
+        <router-outlet />
+    }
+    @else {
+        <app-login />
+    }
+</div>  

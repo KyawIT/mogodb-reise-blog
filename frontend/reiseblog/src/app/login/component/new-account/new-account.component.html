@@ -1,1 +1,23 @@
-<p>new-account works!</p>
+<label for="username">Username</label>
+<input type="text" class="form-control" id="username" [(ngModel)]="user().username" />
+
+<label for="password">Password</label>
+<div class="row">
+    <div class="col-6">
+        <input [type]="showPassword() ? 'text': 'password'" class="form-control" id="password" [(ngModel)]="user().password" />
+    </div>
+    <div class="col-2">
+        <button (click)="showPassword.set(!showPassword())" class="btn btn-sm btn-outline-secondary">Show/Hide</button>
+    </div>
+</div>
+
+<label for="email">E-Mail</label>
+<input type="text" class="form-control" id="email" [(ngModel)]="user().email" />
+
+<label for="firstName">First Name</label>
+<input type="text" class="form-control" id="firstName" [(ngModel)]="user().firstName" />
+
+<label for="lastName">Last Name</label>
+<input type="text" class="form-control" id="lastName" [(ngModel)]="user().lastName" />
+
+<button class="btn btn-primary m-2" (click)="createUser()">Create Account</button>
