@@ -19,4 +19,21 @@ export class LoginService {
     }
     return null;
   }
+
+  public async getUsers():Promise<User[]> {
+    const response = await this.backendService.httpGetRequest('/user');
+    if (response) {
+      return response;
+    }
+    return [];
+  }
+
+  public async getUserFromLogin(username:string, password:string):Promise<User|null> {
+    const response = await this.backendService.httpGetRequest('/user/login?password=' + password + '&username=' + username);
+    if (response) {
+      this.user = response;
+      return response;
+    }
+    return null;
+  }
 }

@@ -1,1 +1,25 @@
-<p>existing-account works!</p>
+<div>
+    <h2>Log In</h2>
+    <label for="username">Username</label>
+    <input type="text" class="form-control" id="username" [(ngModel)]="username" />
+    <label for="password">Password</label>
+    <input type="text" class="form-control" id="password" [(ngModel)]="password" />
+    <button class="btn btn-primary m-2" (click)="login()">Log In</button>
+</div>
+
+<div>
+    <h2>Existing Accounts</h2>
+    @for (user of users(); track $index) {
+        <div class="card card-body m-1"
+        (click)="login(user)">
+            <ul>
+                <li><strong>ID:</strong> {{user.id}}</li>
+                <li><strong>Username:</strong> {{user.username}}</li>
+                <li><strong>Password:</strong> {{user.password}}</li>
+                <li><strong>E-Mail</strong> {{user.email}}</li>
+                <li><strong>First Name</strong> {{user.firstName}}</li>
+                <li><strong>Last Name</strong> {{user.lastName}}</li>
+            </ul>
+        </div>
+    }
+</div>
